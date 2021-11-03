@@ -30,7 +30,7 @@ var keepAliveParams = keepalive.ServerParameters{
 	Timeout:           3 * time.Second,
 }
 
-func (s Server) Run(ctx context.Context, req *pb.TaskRequest) (*pb.TaskResponse, error) {
+func (s Server) TaskRun(ctx context.Context, req *pb.RunTaskRequest) (*pb.RunTaskResp, error) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Error(err)
@@ -38,7 +38,7 @@ func (s Server) Run(ctx context.Context, req *pb.TaskRequest) (*pb.TaskResponse,
 	}()
 	log.Infof("execute cmd start: [id: %d cmd: %s]", req.Id, req.Command)
 	output, err := utils.ExecShell(ctx, req.Command)
-	resp := new(pb.TaskResponse)
+	resp := new(pb.RunTaskResp)
 	resp.Output = output
 	if err != nil {
 		resp.Error = err.Error()

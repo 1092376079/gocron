@@ -17,6 +17,8 @@ import (
 	"github.com/ouqiang/gocron/internal/modules/logger"
 	"github.com/ouqiang/gocron/internal/modules/notify"
 	rpcClient "github.com/ouqiang/gocron/internal/modules/rpc/client"
+	// systemClient "github.com/ouqiang/gocron/internal/modules/rpc/client/systemclient"
+	// userClient "github.com/ouqiang/gocron/internal/modules/rpc/client/systemclient"
 	pb "github.com/ouqiang/gocron/internal/modules/rpc/proto"
 )
 
@@ -243,14 +245,14 @@ func (h *HTTPHandler) Run(taskModel models.Task, taskUniqueId int64) (result str
 type RPCHandler struct{}
 
 func (h *RPCHandler) Run(taskModel models.Task, taskUniqueId int64) (result string, err error) {
-	taskRequest := new(pb.TaskRequest)
+	taskRequest := new(pb.RunTaskRequest)
 	taskRequest.Timeout = int32(taskModel.Timeout)
 	taskRequest.Command = taskModel.Command
 	taskRequest.Id = taskUniqueId
 	resultChan := make(chan TaskResult, len(taskModel.Hosts))
 	for _, taskHost := range taskModel.Hosts {
 		go func(th models.TaskHostDetail) {
-			output, err := rpcClient.Exec(th.Name, th.Port, taskRequest)
+			output, err := rpcClient.Exec(th.Alias, th.Name, th.Port, taskRequest)
 			errorMessage := ""
 			if err != nil {
 				errorMessage = err.Error()

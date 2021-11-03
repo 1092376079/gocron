@@ -36,7 +36,7 @@ func Stop(ip string, port int, id int64) {
 	cancel.(context.CancelFunc)()
 }
 
-func Exec(ip string, port int, taskReq *pb.TaskRequest) (string, error) {
+func Exec(alias string, ip string, port int, taskReq *pb.RunTaskRequest) (string, error) {
 	defer func() {
 		if err := recover(); err != nil {
 			logger.Error("panic#rpc/client.go:Exec#", err)
@@ -58,7 +58,7 @@ func Exec(ip string, port int, taskReq *pb.TaskRequest) (string, error) {
 	taskMap.Store(taskUniqueKey, cancel)
 	defer taskMap.Delete(taskUniqueKey)
 
-	resp, err := c.Run(ctx, taskReq)
+	resp, err := c.TaskRun(alias, ctx, taskReq)
 	if err != nil {
 		return parseGRPCError(err)
 	}
