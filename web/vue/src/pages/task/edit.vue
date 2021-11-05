@@ -324,7 +324,7 @@ export default {
         },
         {
           value: 2,
-          label: 'shell'
+          label: 'rpc'
         }
       ],
       levelList: [
