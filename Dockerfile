@@ -18,20 +18,12 @@ RUN git clone https://github.com/1092376079/gocron.git \
 
 FROM alpine:3.12
 
-RUN apk add --no-cache ca-certificates tzdata \
-    && addgroup -S app \
-    && adduser -S -g app app
-
+RUN apk add --no-cache ca-certificates tzdata
 RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-
 WORKDIR /app
 
 COPY --from=builder /app/gocron/bin/gocron .
 
-RUN chown -R app:app ./
-
 EXPOSE 5920
-
-USER app
 
 ENTRYPOINT ["/app/gocron", "web"]
