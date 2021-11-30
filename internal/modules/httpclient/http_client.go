@@ -4,6 +4,7 @@ package httpclient
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -14,6 +15,16 @@ type ResponseWrapper struct {
 	StatusCode int
 	Body       string
 	Header     http.Header
+}
+
+type MarkDownModel struct {
+	Title string `json:"title,omitempty"`
+	Text  string `json:"text,omitempty"`
+}
+
+type DingMsg struct {
+	MsgType  string   `json:"msgtype,omitempty"`
+	Markdown MarkDownModel `json:"markdown,omitempty"`
 }
 
 func Get(url string, timeout int) ResponseWrapper {
@@ -36,9 +47,9 @@ func PostParams(url string, params string, timeout int) ResponseWrapper {
 	return request(req, timeout)
 }
 
-func PostJson(url string, body string, timeout int) ResponseWrapper {
-	buf := bytes.NewBufferString(body)
-	req, err := http.NewRequest("POST", url, buf)
+func PostJson(url string, body interface{}, timeout int) ResponseWrapper {
+	buf, _ := json.Marshal(body)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(buf))
 	if err != nil {
 		return createRequestError(err)
 	}

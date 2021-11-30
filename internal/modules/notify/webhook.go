@@ -1,6 +1,7 @@
 package notify
 
 import (
+	"fmt"
 	"html"
 	"time"
 
@@ -32,12 +33,20 @@ func (webHook *WebHook) Send(msg Message) {
 }
 
 func (webHook *WebHook) send(msg Message, url string) {
-	content := msg["content"].(string)
+	// content := msg["content"].(string)
+	// 更改为钉钉报警格式
+	body := &httpclient.DingMsg{
+		MsgType: "markdown",
+		Markdown: httpclient.MarkDownModel{
+			Title: "报警： 定时任务 告急",
+			Text: fmt.Sprintf("## 报警： Task_center告急\n\n### 😭😭😭 小D提醒您，任务执行失败\n\n > 任务名称: %s\n\n> 错误日志: \n\n>  %s\n\n> 状态: %s\n\n> 备注: %s", msg["name"], msg["output"], msg["status"], msg["remark"]),
+		},
+	}
 	timeout := 30
 	maxTimes := 3
 	i := 0
 	for i < maxTimes {
-		resp := httpclient.PostJson(url, content, timeout)
+		resp := httpclient.PostJson(url, body, timeout)
 		if resp.StatusCode == 200 {
 			break
 		}
