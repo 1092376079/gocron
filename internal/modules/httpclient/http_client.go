@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/ouqiang/gocron/internal/modules/logger"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -79,7 +80,7 @@ func request(req *http.Request, timeout int) ResponseWrapper {
 	wrapper.StatusCode = resp.StatusCode
 	wrapper.Body = string(body)
 	wrapper.Header = resp.Header
-
+	logger.Infof("http response: %+v", wrapper)
 	return wrapper
 }
 
