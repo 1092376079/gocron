@@ -75,6 +75,7 @@ func request(req *http.Request, timeout int) ResponseWrapper {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		wrapper.Body = fmt.Sprintf("读取HTTP请求返回值失败-%s", err.Error())
+		logger.Errorf("http response: %+v", wrapper)
 		return wrapper
 	}
 	wrapper.StatusCode = resp.StatusCode
